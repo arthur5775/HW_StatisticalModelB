@@ -17,7 +17,7 @@ getwd() # Print the current working directory
 # a) Present numerical and graphical summaries to explore the distributions of each variable:
 # brand, age, fueltype, price, and type. Discuss any interesting findings or trends observed from these summaries. [4 marks]
 
-# Read the data from the txt file into R
+# Read the data from the csv file into R
 file_path <- "C:/Users/Framework_Arthur/Downloads/HWU/F79MB_Statistical Model B/CW2/vehicle.csv"
 vehicle_data <- read.csv(file_path, header = TRUE)
 
@@ -147,13 +147,53 @@ cat("Bootstrap 99% Confidence Interval for Pearson Correlation: [",
 # a) Produce appropriate plots to explore the relationship between the response variable,
 # Satisfaction, and the explanatory variables Class and Distance. Comment on your results for each plot. [3 marks]
 
+# Read the data from the csv file into R
+file_path <- "C:/Users/Framework_Arthur/Downloads/HWU/F79MB_Statistical Model B/CW2/Airline.csv"
+airline_data <- read.csv(file_path, header = TRUE, sep=",")
 
+# Numerical summaries
+head (airline_data) # Display the first few rows of the dataset
+str(airline_data) # Check structure of the dataset
+summary(airline_data) # Summary statistics
+nrow(airline_data) # Number of rows in the dataset = total number of passengers
+table(airline_data$Gender) # Count the number of male and female passengers
+table(airline_data$Class) # Count the number of passengers by class
+table(airline_data$Satisfaction) # Count the number of satisfied and unsatisfied passengers
+summary(airline_data$Distance) # Summary statistics for distance
+summary(airline_data$Delay) # Summary statistics for delay
+summary(airline_data$Age) # Summary statistics for age
+
+# Graphical summaries
+library(ggplot2)
+# Bar plot of satisfaction by class
+ggplot(airline_data, aes(x = Class, fill = factor(Satisfaction))) +
+  geom_bar(position = "fill") + labs(title = "Satisfaction by Class", x = "Class", y = "Proportion") +
+  scale_fill_manual(values = c("red", "green"), labels = c("Neutral/Dissatisfied", "Satisfied")) + theme_minimal()
+# Boxplot of satisfaction by distance
+ggplot(airline_data, aes(x = factor(Satisfaction), y = Distance, fill = factor(Satisfaction))) +
+  geom_boxplot() + labs(title = "Distance by Satisfaction", x = "Satisfaction", y = "Distance (km)") +
+  scale_fill_manual(values = c("red", "green"), labels = c("Neutral/Dissatisfied", "Satisfied")) + theme_minimal()
+# Scatter plot of distance vs delay colored by satisfaction
+ggplot(airline_data, aes(x = Distance, y = Delay, color = factor(Satisfaction))) +
+  geom_point(alpha = 0.6) + labs(title = "Distance vs Delay by Satisfaction", x = "Distance (km)", y = "Delay (minutes)") +
+  scale_color_manual(values = c("red", "green"), labels = c("Neutral/Dissatisfied", "Satisfied")) + theme_minimal()
+# Box plot of delay by satisfaction
+ggplot(airline_data, aes(x = factor(Satisfaction), y = Delay, fill = factor(Satisfaction))) +
+  geom_boxplot() + labs(title = "Delay by Satisfaction", x = "Satisfaction", y = "Delay (minutes)") +
+  scale_fill_manual(values = c("red", "green"), labels = c("Neutral/Dissatisfied", "Satisfied")) + theme_minimal()
 
 # b) Carry out appropriate tests of independence to determine whether the satisfaction status
 # (Satisfaction) for the flight is associated with gender (Gender) and travel class (Class).
 # Your report should include contingency tables, justification for the tests, p-values and clear conclusions. [6 marks]
 
-
+gender_table <- table(airline_data$Satisfaction, airline_data$Gender)
+print(gender_table)
+chi_gender <- chisq.test(gender_table)
+chi_gender
+class_table <- table(airline_data$Satisfaction, airline_data$Class)
+print(class_table)
+chi_class <- chisq.test(class_table)
+chi_class
 
 # c) Analyse the data by fitting a generalized linear model with Satisfaction as the (Binomial)
 # response variable and Gender, Class, Distance, and Delay as explanatory variables
